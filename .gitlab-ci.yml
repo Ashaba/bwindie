@@ -43,4 +43,6 @@ build_image:
     - standard-msg
   stage: build
   script:
+    - $(aws ecr get-login --no-include-email)
     - docker build --force-rm --no-cache --pull --tag $IMAGE_URL .
+    - docker push $IMAGE_URL
