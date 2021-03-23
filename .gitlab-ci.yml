@@ -42,5 +42,9 @@ build_image:
   tags:
     - standard-msg
   stage: build
+  variables:
+    AWS_DEFAULT_REGION: $REGION
   script:
+    - $(aws ecr get-login --no-include-email)
     - docker build --force-rm --no-cache --pull --tag $IMAGE_URL .
+    - docker push $IMAGE_URL
