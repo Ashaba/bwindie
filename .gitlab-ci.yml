@@ -1,0 +1,26 @@
+stages:
+  - lint
+  - test
+  - build
+  - setup
+
+variables:
+  APP_NAME: bwindie-lab
+  IMAGE_URL: bwindie
+
+lint:
+  image: "gradle:6.8.3-jdk11"
+  script: "./gradlew check"
+  stage: lint
+
+test:
+  image: "gradle:6.8.3-jdk11"
+  script: "./gradlew test"
+  stage: test
+
+build_image:
+  tags:
+    - standard-msg
+  stage: build
+  script:
+    - docker build --force-rm --no-cache --pull --tag $IMAGE_URL .
