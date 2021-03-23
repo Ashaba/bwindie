@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'AWS cfn template for building an application-specific ECR'
+
+Parameters:
+  ApplicationName:
+    AllowedPattern: ^[a-z]([a-z0-9-])+$
+    ConstraintDescription: Application name must be between 2 and
+        50 characters, begin with a letter, and only contain
+        lowercase letters, numbers, and hyphens (-).
+    Description: Name of the application.
+    MaxLength: 50
+    MinLength: 2
+    Type: String
+
+Resources:
+  EcrRepository:
+    Type: AWS::ECR::Repository
+    Properties:
+      RepositoryName: !Ref 'ApplicationName'
+      RepositoryPolicyText:
+        Version: 2008-10-17
+        Statement:
+          - Sid: AllowPullFromCICDServers
+            Effect: Allow
+            Principal:
+              AWS:
+                - arn:aws:iam::056981998066:role/CicdRole # npdplatform
+                - arn:aws:iam::160785667362:role/CicdRole # prdplatform
+                - arn:aws:iam::056981998066:role/fargateECSRole # npdplatform
+                - arn:aws:iam::160785667362:role/fargateECSRole # prdplatform
+                - arn:aws:iam::933741079944:role/LAB-FARGATE-VPC-ECSRole-UGCLZCGUQY6U #lab
+            Action:
+              - ecr:BatchCheckLayerAvailability
+              - ecr:BatchGetImage
+              - ecr:DescribeImages
+              - ecr:DescribeRepositories
+              - ecr:GetAuthorizationToken
+              - ecr:GetDownloadUrlForLayer
+              - ecr:ListImages
+
+Outputs:
+  Arn:
+    Description: The arn of the ECR Repository
+    Value: !GetAtt EcrRepository.Arn
+    Export:
+      Name: !Join ['-', [!Ref 'AWS::StackName', 'RepoArn']]

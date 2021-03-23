@@ -1,12 +1,14 @@
 stages:
   - lint
   - test
-  - build
   - setup
+  - build
 
 variables:
   APP_NAME: bwindie-lab
   IMAGE_URL: bwindie
+  REGION: us-west-2
+  LOB_ACCOUNT_NUMBER: 933741079944
 
 lint:
   image: "gradle:6.8.3-jdk11"
@@ -17,6 +19,24 @@ test:
   image: "gradle:6.8.3-jdk11"
   script: "./gradlew test"
   stage: test
+
+setup_repo:
+  tags:
+    - standard-msg
+  stage: setup
+  variables:
+    AWS_DEFAULT_REGION: $REGION
+  script:
+    - |
+      if ! aws cloudformation describe-stacks --stack-name ecr-repo-$APP_NAME 2>/dev/null ; then
+        aws cloudformation create-stack --stack-name ecr-repo-$APP_NAME \
+        --template-body file://_cloudformation/repo.yaml \
+        --parameter ParameterKey=ApplicationName,ParameterValue=$APP_NAME
+      fi;
+    - aws cloudformation wait stack-create-complete --stack-name ecr-repo-$APP_NAME
+  only:
+    - master
+    - develop
 
 build_image:
   tags:
