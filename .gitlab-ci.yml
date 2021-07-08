@@ -6,9 +6,11 @@ stages:
 
 variables:
   APP_NAME: bwindie-lab
-  IMAGE_URL: bwindie
   REGION: us-west-2
-  LOB_ACCOUNT_NUMBER: 446337779084
+  LOB_ACCOUNT_NUMBER: 933741079944
+  REPOSITORY_URL: ${LOB_ACCOUNT_NUMBER}.dkr.ecr.${REGION}.amazonaws.com/${APP_NAME}
+  IMAGE_URL: ${LOB_ACCOUNT_NUMBER}.dkr.ecr.${REGION}.amazonaws.com/${APP_NAME}:v${CI_PIPELINE_ID}
+
 
 lint:
   image: "gradle:6.8.3-jdk11"
