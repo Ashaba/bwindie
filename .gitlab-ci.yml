@@ -47,7 +47,6 @@ build_image:
   variables:
     AWS_DEFAULT_REGION: $REGION
   script:
-#    - $(aws ecr get-login --no-include-email)
-    - eval $(aws ecr get-login --no-include-email --region| sed 's|https://||')
+    - $(aws ecr get-login --no-include-email)
     - docker build --force-rm --no-cache --pull --tag $IMAGE_URL .
     - docker push $IMAGE_URL

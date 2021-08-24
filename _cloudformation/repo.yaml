@@ -24,10 +24,6 @@ Resources:
             Effect: Allow
             Principal:
               AWS:
-                - arn:aws:iam::056981998066:role/CicdRole # npdplatform
-                - arn:aws:iam::160785667362:role/CicdRole # prdplatform
-                - arn:aws:iam::056981998066:role/fargateECSRole # npdplatform
-                - arn:aws:iam::160785667362:role/fargateECSRole # prdplatform
                 - arn:aws:iam::933741079944:role/LAB-FARGATE-VPC-ECSRole-UGCLZCGUQY6U #lab
             Action:
               - ecr:BatchCheckLayerAvailability
